@@ -2,6 +2,9 @@
 # setting the locale, some users have issues with different locales, this forces the correct one
 export LC_ALL=en_US.UTF-8
 
+current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $current_dir/utils.sh
+
 HOSTS="google.com github.com example.com"
 
 get_ssid()
@@ -38,6 +41,7 @@ get_ssid()
 main()
 {
   network="Offline"
+  network_label=$(get_tmux_option "@dracula-network-label" "📡")
   for host in $HOSTS; do
     if ping -q -c 1 -W 1 $host &>/dev/null; then
       network="$(get_ssid)"
@@ -45,7 +49,7 @@ main()
     fi
   done
 
-  echo "$network"
+  echo "${network_label} ${network}"
 }
 
 #run main driver function

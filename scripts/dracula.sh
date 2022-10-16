@@ -82,8 +82,8 @@ main()
       flags=""
       current_flags="";;
     true)
-      flags="#{?window_flags,#[fg=${dark_purple}]#{window_flags},}"
-      current_flags="#{?window_flags,#[fg=${light_purple}]#{window_flags},}"
+      flags="#{?window_flags,#[fg=${dark_gray}]#{window_flags},}"
+      current_flags="#{?window_flags,#[fg=${white}]#{window_flags},}"
   esac
 
   # sets refresh interval to every 5 seconds
@@ -97,7 +97,7 @@ main()
   fi
 
   # set length
-  tmux set-option -g status-left-length 100
+  tmux set-option -g status-left-length 99
   tmux set-option -g status-right-length 100
 
   # pane border styling
@@ -106,20 +106,20 @@ main()
   else
     tmux set-option -g pane-active-border-style "fg=${dark_purple}"
   fi
-  tmux set-option -g pane-border-style "fg=${gray}"
+  tmux set-option -g pane-border-style "fg=${dark_gray}"
 
   # message styling
-  tmux set-option -g message-style "bg=${gray},fg=${white}"
+  tmux set-option -g message-style "bg=${dark_gray},fg=${white}"
 
   # status bar
-  tmux set-option -g status-style "bg=${gray},fg=${white}"
+  tmux set-option -g status-style "bg=${dark_gray},fg=${white}"
 
   # Status left
   if $show_powerline; then
-    tmux set-option -g status-left "#[bg=${green},fg=${dark_gray}]#{?client_prefix,#[bg=${yellow}],} ${left_icon} #[fg=${green},bg=${gray}]#{?client_prefix,#[fg=${yellow}],}${left_sep}"
-    powerbg=${gray}
+    tmux set-option -g status-left "#[bg=${dark_purple},fg=${white}]#{?client_prefix,#[bg=${cyan}],} ${left_icon} #[fg=${dark_purple},bg=${dark_gray}]#{?client_prefix,#[fg=${cyan}],}${left_sep}"
+    powerbg=${dark_gray}
   else
-    tmux set-option -g status-left "#[bg=${green},fg=${dark_gray}]#{?client_prefix,#[bg=${yellow}],} ${left_icon}"
+    tmux set-option -g status-left "#[bg=${dark_gray},fg=${gray}]#{?client_prefix,#[bg=${dark_gray}],} ${left_icon}"
   fi
 
   # Status right
@@ -179,6 +179,18 @@ main()
       script="#(cat $datafile)"
     fi
 
+    if [ $plugin = "email-unread" ]; then
+      # find and report latest count of unread mail via quick curl statement
+      IFS=' ' read -r -a colors <<< $(get_tmux_option "@dracula-email-unread-colors" "light_purple dark_gray")
+      script="#($current_dir/email_unread.sh)"
+    fi
+
+    if [ $plugin = "slack-unread" ]; then
+      # find and report latest count of unread slacks msgs via quick curl statement
+      IFS=' ' read -r -a colors <<< $(get_tmux_option "@dracula-slack-unread-colors" "dark_purple dark_gray")
+      script="#($current_dir/slack_unread.sh)"
+    fi
+
     if [ $plugin = "time" ]; then
       IFS=' ' read -r -a colors <<< $(get_tmux_option "@dracula-time-colors" "dark_purple white")
       if $show_day_month && $show_military ; then # military time and dd/mm
@@ -202,12 +214,12 @@ main()
 
   # Window option
   if $show_powerline; then
-    tmux set-window-option -g window-status-current-format "#[fg=${gray},bg=${dark_purple}]${left_sep}#[fg=${white},bg=${dark_purple}] #I #W${current_flags} #[fg=${dark_purple},bg=${gray}]${left_sep}"
+    tmux set-window-option -g window-status-current-format "#[fg=${dark_gray},bg=${gray}]${left_sep}#[fg=${white},bg=${gray}] #I #W${current_flags} #[fg=${gray},bg=${dark_gray}]${left_sep}"
   else
-    tmux set-window-option -g window-status-current-format "#[fg=${white},bg=${dark_purple}] #I #W${current_flags} "
+    tmux set-window-option -g window-status-current-format "#[fg=${white},bg=${gray}] #I #W${current_flags} "
   fi
 
-  tmux set-window-option -g window-status-format "#[fg=${white}]#[bg=${gray}] #I #W${flags}"
+  tmux set-window-option -g window-status-format "#[fg=${white}]#[bg=${dark_gray}] #I #W${flags}"
   tmux set-window-option -g window-status-activity-style "bold"
   tmux set-window-option -g window-status-bell-style "bold"
 }
