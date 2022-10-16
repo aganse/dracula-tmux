@@ -179,6 +179,12 @@ main()
       script="#(cat $datafile)"
     fi
 
+    if [ $plugin = "email-unread" ]; then
+      # find and report latest count of unread mail via quick curl statement
+      IFS=' ' read -r -a colors <<< $(get_tmux_option "@dracula-email-unread" "light_purple dark_gray")
+      script="#($current_dir/email_unread.sh)"
+    fi
+
     if [ $plugin = "time" ]; then
       IFS=' ' read -r -a colors <<< $(get_tmux_option "@dracula-time-colors" "dark_purple white")
       if $show_day_month && $show_military ; then # military time and dd/mm
