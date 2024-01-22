@@ -2,6 +2,9 @@
 # setting the locale, some users have issues with different locales, this forces the correct one
 export LC_ALL=en_US.UTF-8
 
+current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $current_dir/utils.sh
+
 fahrenheit=$1
 location=$2
 fixedlocation=$3
@@ -46,17 +49,18 @@ display_weather()
 forecast_unicode()
 {
   weather_condition=$(echo $weather_condition | awk '{print tolower($0)}')
+  weather_label=$(get_tmux_option "@dracula-weather-label" "❄☂☁☀")
 
   if [[ $weather_condition =~ 'snow' ]]; then
-    echo '❄ '
+    echo "${weather_label:0:1} "
   elif [[ (($weather_condition =~ 'rain') || ($weather_condition =~ 'shower')) ]]; then
-    echo '☂ '
+    echo "${weather_label:1:1} "
   elif [[ (($weather_condition =~ 'overcast') || ($weather_condition =~ 'cloud')) ]]; then
-    echo '☁ '
+    echo "${weather_label:2:1} "
   elif [[ $weather_condition = 'NA' ]]; then
     echo ''
   else
-    echo '☀ '
+    echo "${weather_label:3:1} "
   fi
 }
 
